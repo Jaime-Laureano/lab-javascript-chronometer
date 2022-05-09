@@ -1,69 +1,61 @@
+
 class Chronometer {
   constructor() {
     this.currentTime = 0;
     this.intervalId = null;
+    this.currentMilliseconds = 0; // <= BONUS
+    this.millisecondsIntervalId = 0 // <= BONUS
   }
 
-  start(callback) {
-    
-    this.intervalId = setInterval (() =>  {
-      
+  start(callback, /* BONUS => */ printMilliseconds) {
+    this.intervalId = setInterval( () => {
       this.currentTime++;
-    
-
+      if (callback) callback();
     }, 1000);
-  }
-  
 
+    // BONUS =>
+    // Can be merged into same setInterval. Done separatly for better understanding of mandatory iterations.
+    this.millisecondsIntervalId = setInterval( () => {
+      if (this.currentMilliseconds === 99) {
+        this.currentMilliseconds = 0;
+      }
+      this.currentMilliseconds += 1;
+      if (printMilliseconds) printMilliseconds();
+    }, 10);
+  }
 
   getMinutes() {
-    // ... your code goes here
-
-    return Math.floor(this.currentTime/60);
-
+    let currentTimeMin = Math.floor(this.currentTime / 60);
+    console.log(currentTimeMin)
+    return currentTimeMin;
   }
 
   getSeconds() {
-    // ... your code goes here
-
-    return this.currentTime % 60;
-    
+    let currentTimeSec = this.currentTime % 60;
+    return currentTimeSec;
   }
-  
 
   computeTwoDigitNumber(value) {
-    // ... your code goes here
-
-    if (value<10){
-      return (`0${value}`)
-    } else {
-      return (`${value}`)
-    }
-
+    return ("0" + value).slice(-2);
   }
 
   stop() {
-    // ... your code goes here
-
     clearInterval(this.intervalId);
+    clearInterval(this.millisecondsIntervalId);
   }
 
   reset() {
-    // ... your code goes here
+    this.currentTime = 0;
+    // BONUS =>
+    this.currentMilliseconds = 0;
 
-    this.currentTime = 0
   }
 
   split() {
-    // ... your code goes here
+    let minutes = this.computeTwoDigitNumber(this.getMinutes());
+    let seconds = this.computeTwoDigitNumber(this.getSeconds());
+    let milliseconds = this.computeTwoDigitNumber(this.currentMilliseconds); // <= BONUS 
 
-    return (`${this.computeTwoDigitNumber(this.getMinutes())}
-            :${this.computeTwoDigitNumber(this.getSeconds())}`);
+    return `${minutes}:${seconds}:${milliseconds}`;
   }
-}
-
-// The following is required to make unit tests work.
-/* Environment setup. Do not modify the below code. */
-if (typeof module !== 'undefined') {
-  module.exports = Chronometer;
 }
